@@ -1,0 +1,401 @@
+/* =========================================
+   MODERNIZED E-COMMERCE STYLE.CSS (FINAL FIX)
+   ========================================= */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+
+/* --- Modern Color Palette & Variables --- */
+:root {
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --dark: #0f172a;
+  --gray: #64748b;
+  --light-bg: #f8fafc;
+  --card-bg: #ffffff;
+}
+
+/* --- Base & Reset --- */
+body {
+  font-family: 'Inter', sans-serif !important;
+  background-color: var(--light-bg) !important;
+  color: var(--dark) !important;
+  padding-top: 80px !important; 
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  text-decoration: none !important;
+  transition: all 0.3s ease;
+}
+
+/* --- Sleek Glassmorphism Navbar --- */
+.navbar.navbar-default.navbar-fixed-top {
+  background: rgba(255, 255, 255, 0.98) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: none !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05) !important;
+  min-height: 80px !important;
+}
+
+.navbar-brand {
+  display: flex !important;
+  align-items: center !important;
+  height: 80px !important;
+  padding: 0 15px !important;
+  margin: 0 !important;
+}
+
+.navbar-brand h2 {
+  font-weight: 800 !important;
+  color: var(--dark) !important;
+  margin: 0 !important;
+  font-size: 26px !important;
+  text-transform: lowercase;
+}
+
+.navbar-brand h2 span {
+  color: var(--primary) !important;
+}
+
+.navbar.navbar-default .main_nav li a {
+  color: var(--dark) !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+
+.navbar.navbar-default .main_nav li a:hover {
+  color: var(--primary) !important;
+}
+
+.navbar.navbar-default .navbar-right li a i {
+  font-size: 20px !important;
+  color: var(--dark) !important;
+}
+
+/* --- NAVBAR LAYOUT FIXES (Desktop Single Line) --- */
+@media (min-width: 992px) {
+  /* Kill Bootstrap's Clearfix that was breaking the row */
+  .navbar .container .row::before,
+  .navbar .container .row::after {
+    display: none !important;
+    content: none !important;
+  }
+  
+  .navbar .container .row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+  }
+  
+  /* Strip Bootstrap's float behavior */
+  .col-md-2, .col-md-9, .col-md-1, .navbar-header, .navbar-collapse {
+    /* float: none !important; */
+    padding: 0 !important;
+  }
+  
+  .navbar-collapse {
+    display: flex !important;
+    align-items: center !important;
+    flex-grow: 1 !important;
+    justify-content: space-between !important;
+  }
+  
+  .navbar-collapse .col-md-9 {
+    display: flex !important;
+    justify-content: center !important;
+    flex-grow: 1 !important;
+  }
+  
+  .navbar-collapse .col-md-1 {
+    display: flex !important;
+    justify-content: flex-end !important;
+  }
+  
+  .navbar.navbar-default .main_nav {
+    display: flex !important;
+    flex-direction: row !important;
+    margin: 0 !important;
+  }
+  
+  .navbar.navbar-default .navbar-right {
+    display: flex !important;
+    flex-direction: row !important;
+    margin: 0 !important;
+  }
+}
+
+/* --- NAVBAR LAYOUT FIXES (Mobile Vertical Stacking) --- */
+@media (max-width: 991px) {
+  .navbar-collapse.collapse.in {
+    display: flex !important;
+    flex-direction: column !important; /* FORCES VERTICAL MENU */
+    background: #ffffff !important;
+    position: absolute !important;
+    top: 80px !important;
+    left: 0 !important;
+    width: 100% !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+    padding: 10px 0 !important;
+  }
+
+  .navbar.navbar-default .main_nav {
+    display: flex !important;
+    flex-direction: column !important; /* FORCES VERTICAL MENU */
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+  
+  .navbar.navbar-default .main_nav li {
+    width: 100% !important;
+    text-align: center !important;
+  }
+  
+  .navbar.navbar-default .main_nav li a {
+    display: block !important;
+    padding: 15px 20px !important;
+  }
+  
+  .navbar.navbar-default .navbar-right {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+    padding: 10px 0 !important;
+    margin: 0 !important;
+  }
+}
+
+/* --- Hero / Slider Area --- */
+.slider_area {
+  background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)), url("../img/slider.jpg") center/cover no-repeat !important;
+  height: 50vh !important;
+  min-height: 400px !important;
+  max-height: 500px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  margin: 0 !important;
+  width: 100% !important;
+}
+
+.camera_caption {
+  width: 100% !important;
+  padding: 0 20px !important;
+}
+
+.camera_caption h2 {
+  font-size: 3.5rem !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  margin-bottom: 1rem !important;
+}
+
+.camera_caption h5 {
+  font-size: 1.25rem !important;
+  color: #e2e8f0 !important;
+  margin-bottom: 2.5rem !important;
+}
+
+.learn_mor {
+  background: var(--primary) !important;
+  color: #ffffff !important;
+  padding: 14px 36px !important;
+  border-radius: 50px !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  display: inline-block !important;
+  box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4) !important;
+}
+
+.learn_mor:hover {
+  background: var(--primary-hover) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* --- Modern Product Cards --- */
+.best_business_area {
+  padding: 80px 0 !important;
+  background: var(--light-bg) !important;
+}
+
+.check_tittle h2 {
+  text-align: center !important;
+  font-weight: 800 !important;
+  font-size: 2.5rem !important;
+  margin-bottom: 3.5rem !important;
+  color: var(--dark) !important;
+}
+
+/* CSS Grid for perfect card alignment */
+.it_works {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
+  gap: 30px !important;
+  padding: 0 15px !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+}
+
+/* Override Bootstrap's column width */
+.business_content {
+  background: var(--card-bg) !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
+  transition: all 0.3s ease !important;
+  border: 1px solid #e2e8f0 !important;
+  padding: 0 !important; 
+  width: 100% !important; 
+  max-width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  margin: 0 !important;
+}
+
+.business_content:hover {
+  transform: translateY(-8px) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Full bleed images for cards */
+.business_content img {
+  width: 100% !important;
+  height: 200px !important;
+  object-fit: cover !important; 
+  background: #f8fafc !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  border-radius: 16px 16px 0 0 !important;
+}
+
+.business_content .media {
+  padding: 24px !important;
+  text-align: center !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  flex-grow: 1 !important;
+}
+
+.business_content .media-body {
+  width: 100% !important;
+}
+
+/* --- FIXED COURSE NAME SIZE --- */
+.business_content .media-body a {
+  font-size: 20px !important; /* Much larger */
+  font-weight: 800 !important; /* Much bolder */
+  color: var(--dark) !important;
+  margin-bottom: 12px !important;
+  display: block !important;
+  line-height: 1.3 !important;
+}
+
+.business_content .media-body a:hover {
+  color: var(--primary) !important;
+}
+
+.business_content .media-body p {
+  color: var(--gray) !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  margin: 0 !important;
+}
+
+.business_content .media-body p span {
+  display: block !important;
+  color: var(--primary) !important;
+  font-size: 24px !important; /* Large Price */
+  font-weight: 800 !important;
+  margin-top: 15px !important;
+}
+
+/* --- Clean Footer --- */
+.footer_area {
+  background: var(--dark) !important;
+  padding: 30px 0 !important;
+  text-align: center !important;
+  border-top: 4px solid var(--primary) !important;
+  width: 100% !important;
+}
+
+.copy_right {
+  margin: 0 !important;
+  font-size: 15px !important;
+  color: #94a3b8 !important;
+  font-weight: 400 !important;
+}
+
+/* --- Error States --- */
+.error-content {
+  background: #fef2f2;
+  border: 1px solid #f87171;
+  color: #991b1b;
+  text-align: center;
+  padding: 40px 20px;
+  border-radius: 12px;
+  margin-top: 20px;
+}
+.error-content h1 {
+  color: #7f1d1d;
+  font-weight: 700;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+/* --- Search Form Overlay --- */
+.searchForm {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  background: #ffffff;
+  z-index: 1002;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.searchForm form {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.searchForm .input-group {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid var(--primary);
+  padding: 0 15px;
+}
+
+.searchForm .form-control {
+  border: none;
+  box-shadow: none;
+  font-size: 18px;
+  height: 50px;
+  background: transparent;
+  color: var(--dark);
+  padding: 0 15px;
+  width: 100%;
+}
+
+.searchForm .input-group-addon {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  color: var(--gray);
+}
+
+.searchForm .form_hide {
+  cursor: pointer;
+  color: var(--primary);
+}
