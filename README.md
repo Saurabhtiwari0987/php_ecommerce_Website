@@ -91,7 +91,7 @@ sudo systemctl restart apache2
 Clone the repository into Apache’s web directory:
 
 sudo rm -rf /var/www/html/*
-sudo git clone https://gitlab.com/debjyotimt/e-commerce-app-3-tier.git /var/www/html
+sudo git clone https://github.com/Saurabhtiwari0987/php_ecommerce_Website.git /var/www/html
 
 🟩 6. Create Environment File
 
