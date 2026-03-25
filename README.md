@@ -1,132 +1,358 @@
-📘 README — Deploying the CodeKloud E-Commerce App on Ubuntu (WSL)
-📘 README — Deploying the CodeKerdos E-Commerce App on Ubuntu (WSL)
+# 📘 Linux Project — Deploy 3‑Tier PHP Application (WSL / Ubuntu)
 
-This document provides step-by-step instructions to deploy the CodeKloud E-Commerce Application on Ubuntu (WSL or regular Ubuntu Server).
-This document provides step-by-step instructions to deploy the CodeKerdos E-Commerce Application on Ubuntu (WSL or regular Ubuntu Server).
-This version is adapted from the original CentOS guide.
+# 🎯 Project Goal
 
-🟩 1. Update System
+Deploy a **3‑Tier PHP Application** on **Ubuntu / WSL** while learning:
+
+* Linux Commands
+* Apache Web Server
+* PHP Configuration
+* MariaDB Database
+* Environment Variables
+* Application Deployment
+* Troubleshooting
+
+This is **Step‑1 of End‑to‑End DevOps Project**
+
+---
+
+# 🏗️ 3‑Tier Architecture (Linux Local)
+
+```
+Browser
+   ↓
+Apache (Web Tier)
+   ↓
+PHP Application (App Tier)
+   ↓
+MariaDB (Database Tier)
+```
+
+---
+
+# 🐧 Step 1 — Update System
+
+Always update system before installation
+
+```bash
 sudo apt update -y
 sudo apt upgrade -y
+```
 
-🟩 2. Install & Configure MariaDB (Database Layer)
-Install MariaDB
-sudo apt install -y mariadb-server
+Useful Linux Commands
 
-Start & Enable MariaDB
+```bash
+uname -a
+whoami
+pwd
+ls -la
+free -m
+df -h
+```
 
-(If WSL supports systemd)
+---
+
+# 🗂️ Step 2 — Install Required Packages
+
+```bash
+sudo apt install apache2 php php-mysql mariadb-server git curl -y
+```
+
+Verify Installation
+
+```bash
+apache2 -v
+php -v
+mysql --version
+```
+
+---
+
+# 🔧 Step 3 — Start Services
+
+```bash
+sudo systemctl start apache2
+sudo systemctl enable apache2
 
 sudo systemctl start mariadb
 sudo systemctl enable mariadb
+```
 
-Login to MySQL
+Check Status
+
+```bash
+sudo systemctl status apache2
+sudo systemctl status mariadb
+```
+
+---
+
+# 🗄️ Step 4 — Create Database
+
+Login to MariaDB
+
+```bash
 sudo mysql
+```
 
-Create database & user
+Create Database
 
-Inside MySQL shell:
-
+```sql
 CREATE DATABASE ecomdb;
+
 CREATE USER 'ecomuser'@'localhost' IDENTIFIED BY 'ecompassword';
-GRANT ALL PRIVILEGES ON *.* TO 'ecomuser'@'localhost';
+
+GRANT ALL PRIVILEGES ON ecomdb.* TO 'ecomuser'@'localhost';
+
 FLUSH PRIVILEGES;
 
-🟩 3. Load Initial Product Data
-🟩 3. Load Initial Course Data
+EXIT;
+```
 
-Create the SQL file:
+---
 
-cat > db-load-script.sql << 'EOF'
+# 📦 Step 5 — Create Database Table
+
+Create SQL file
+
+```bash
+nano db-load-script.sql
+```
+
+Paste
+
+```sql
 USE ecomdb;
+
 CREATE TABLE products (
-CREATE TABLE courses (
-    id mediumint(8) unsigned NOT NULL auto_increment,
-    Name varchar(255) default NULL,
-    Price varchar(255) default NULL,
-    ImageUrl varchar(255) default NULL,
-    imageURL varchar(255) default NULL,
-    PRIMARY KEY (id)
-) AUTO_INCREMENT=1;
+ id mediumint(8) unsigned NOT NULL auto_increment,
+ Name varchar(255),
+ Price varchar(255),
+ ImageUrl varchar(255),
+ PRIMARY KEY (id)
+);
 
 INSERT INTO products (Name,Price,ImageUrl) VALUES
 ("Laptop","100","c-1.png"),
 ("Drone","200","c-2.png"),
 ("VR","300","c-3.png"),
-("Tablet","50","c-5.png"),
-("Watch","90","c-6.png"),
-("Phone Covers","20","c-7.png"),
-("Phone","80","c-8.png"),
-("Laptop","150","c-4.png");
-INSERT INTO courses (Name, Price, imageURL) VALUES
-("Dev Ops", "89,999", "c-1.png"),
-("System Design", "79999", "c-2.png"),
-("DSA & System Design", "80000", "c-3.png"),
-("Agentic AI", "90000", "c-5.png");
-EOF
+("Tablet","50","c-4.png");
+```
 
+Load Database
 
-Load data:
-
+```bash
 sudo mysql < db-load-script.sql
+```
 
-🟩 4. Install Apache & PHP (Web Layer)
+Verify
 
-Install required packages:
+```bash
+sudo mysql
 
-sudo apt install -y apache2 php php-mysql git
+use ecomdb;
 
+show tables;
 
-Make sure Apache loads index.php first:
+select * from products;
+```
 
-sudo sed -i 's/index.html/index.php/g' /etc/apache2/mods-enabled/dir.conf
+---
 
+# 🌐 Step 6 — Configure Apache
 
-Restart Apache:
+Set index.php first
 
+```bash
+sudo nano /etc/apache2/mods-enabled/dir.conf
+```
+
+Make sure
+
+```
+DirectoryIndex index.php index.html
+```
+
+Restart Apache
+
+```bash
 sudo systemctl restart apache2
+```
 
-🟩 5. Deploy Application Code
+---
 
-Clone the repository into Apache’s web directory:
+# 📂 Step 7 — Deploy Application
 
-sudo rm -rf /var/www/html/*
-sudo git clone https://github.com/Saurabhtiwari0987/php_ecommerce_Website.git /var/www/html
+Move to web directory
 
-🟩 6. Create Environment File
+```bash
+cd /var/www/html
+```
 
-Create a .env in /var/www/html:
+Remove default files
 
-sudo bash -c 'cat > /var/www/html/.env << "EOF"
+```bash
+sudo rm -rf *
+```
+
+Clone Project
+
+```bash
+sudo git clone https://github.com/Saurabhtiwari0987/php_ecommerce_Website.git .
+```
+
+Check files
+
+```bash
+ls -la
+```
+
+---
+
+# 🔐 Step 8 — Create Environment File
+
+```bash
+sudo nano .env
+```
+
+Add
+
+```
 DB_HOST=localhost
 DB_USER=ecomuser
 DB_PASSWORD=ecompassword
 DB_NAME=ecomdb
-EOF'
+```
 
-🟩 7. Application Code Notes
+---
 
-The provided index.php already contains code to read values from the environment variables:
+# 🔑 Step 9 — Set Permissions
 
-$dbHost = getenv('DB_HOST');
-$dbUser = getenv('DB_USER');
-$dbPassword = getenv('DB_PASSWORD');
-$dbName = getenv('DB_NAME');
+```bash
+sudo chown -R www-data:www-data /var/www/html
 
+sudo chmod -R 755 /var/www/html
+```
 
-No additional changes are required.
+---
 
-🟩 8. Test the Application
+# 🧪 Step 10 — Test Application
 
-From WSL terminal:
+From Linux
 
-curl http://localhost
+```bash
+curl localhost
+```
 
+From Browser
 
-From Windows browser:
-
+```
 http://localhost
+```
 
+---
 
-You should now see the product list loading from MariaDB.
-You should now see the course list loading from MariaDB.
+# 🔍 Troubleshooting Commands
+
+Check Apache Logs
+
+```bash
+sudo tail -f /var/log/apache2/error.log
+```
+
+Check Port
+
+```bash
+sudo netstat -tulpn | grep 80
+```
+
+Check Service
+
+```bash
+sudo systemctl status apache2
+```
+
+Restart Services
+
+```bash
+sudo systemctl restart apache2
+sudo systemctl restart mariadb
+```
+
+---
+
+# 📚 Linux Commands Used in Project
+
+File Commands
+
+```bash
+ls
+cd
+pwd
+mkdir
+rm
+cp
+mv
+```
+
+Service Commands
+
+```bash
+systemctl start
+systemctl stop
+systemctl restart
+systemctl status
+```
+
+Permission Commands
+
+```bash
+chmod
+chown
+```
+
+Networking Commands
+
+```bash
+curl
+ping
+netstat
+ss
+```
+
+Process Commands
+
+```bash
+top
+ps -ef
+kill
+```
+
+---
+
+# 🎯 Learning Outcome
+
+After completing this lab student will learn:
+
+✅ Linux Basics
+✅ Apache Web Server
+✅ PHP Configuration
+✅ Database Setup
+✅ Environment Variables
+✅ Application Deployment
+✅ Troubleshooting
+
+---
+
+# 🚀 Next Step
+
+AWS 3‑Tier Architecture Deployment
+
+---
+
+# 👨‍💻 Author
+
+Saurabh Tiwari
+
+DevOps End‑to‑End Project
+
