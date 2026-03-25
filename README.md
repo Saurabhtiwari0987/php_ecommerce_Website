@@ -344,9 +344,176 @@ After completing this lab student will learn:
 
 ---
 
+# 🐚 Shell Scripting Automation (DevOps Practice)
+
+This project also includes **Shell Scripting** to automate deployment.
+
+---
+
+# 📜 Script 1 — Full Deployment Script
+
+Create file
+
+```bash
+nano deploy.sh
+```
+
+Paste
+
+```bash
+#!/bin/bash
+
+# Update System
+sudo apt update -y
+sudo apt upgrade -y
+
+# Install Packages
+sudo apt install apache2 php php-mysql mariadb-server git curl -y
+
+# Start Services
+sudo systemctl start apache2
+sudo systemctl enable apache2
+
+sudo systemctl start mariadb
+sudo systemctl enable mariadb
+
+# Create Database
+sudo mysql <<EOF
+CREATE DATABASE ecomdb;
+CREATE USER 'ecomuser'@'localhost' IDENTIFIED BY 'ecompassword';
+GRANT ALL PRIVILEGES ON ecomdb.* TO 'ecomuser'@'localhost';
+FLUSH PRIVILEGES;
+EOF
+
+# Deploy Application
+cd /var/www/html
+sudo rm -rf *
+
+sudo git clone https://github.com/Saurabhtiwari0987/php_ecommerce_Website.git .
+
+# Permission
+sudo chown -R www-data:www-data /var/www/html
+
+# Restart Apache
+sudo systemctl restart apache2
+
+
+echo "Deployment Completed Successfully"
+```
+
+Make Executable
+
+```bash
+chmod +x deploy.sh
+```
+
+Run Script
+
+```bash
+./deploy.sh
+```
+
+---
+
+# 📜 Script 2 — Database Setup Script
+
+```bash
+nano db-setup.sh
+```
+
+```bash
+#!/bin/bash
+
+sudo mysql <<EOF
+CREATE DATABASE ecomdb;
+CREATE USER 'ecomuser'@'localhost' IDENTIFIED BY 'ecompassword';
+GRANT ALL PRIVILEGES ON ecomdb.* TO 'ecomuser'@'localhost';
+FLUSH PRIVILEGES;
+EOF
+
+echo "Database Created"
+```
+
+---
+
+# 📜 Script 3 — Application Deployment Script
+
+```bash
+nano app-deploy.sh
+```
+
+```bash
+#!/bin/bash
+
+cd /var/www/html
+
+sudo rm -rf *
+
+sudo git clone https://github.com/Saurabhtiwari0987/php_ecommerce_Website.git .
+
+sudo chown -R www-data:www-data /var/www/html
+
+sudo systemctl restart apache2
+
+echo "Application Deployed"
+```
+
+---
+
+# 📜 Script 4 — Health Check Script
+
+```bash
+nano health-check.sh
+```
+
+```bash
+#!/bin/bash
+
+echo "Apache Status"
+
+sudo systemctl status apache2
+
+echo "Database Status"
+
+sudo systemctl status mariadb
+
+echo "Port Check"
+
+sudo ss -tulpn | grep 80
+```
+
+---
+
+# 📚 Shell Script Commands Used
+
+```bash
+#!/bin/bash
+if
+else
+fi
+EOF
+chmod +x
+./script.sh
+```
+
+---
+
+# 🎯 Learning Outcome
+
+Student will learn:
+
+✅ Linux Commands
+✅ Apache Deployment
+✅ Database Setup
+✅ Shell Scripting
+✅ Automation
+✅ Troubleshooting
+
+---
+
 # 🚀 Next Step
 
-AWS 3‑Tier Architecture Deployment
+AWS 3-Tier Deployment
 
 ---
 
@@ -354,5 +521,8 @@ AWS 3‑Tier Architecture Deployment
 
 Saurabh Tiwari
 
-DevOps End‑to‑End Project
+DevOps End-to-End Project
 
+Saurabh Tiwari
+
+DevOps End‑to‑End Project
