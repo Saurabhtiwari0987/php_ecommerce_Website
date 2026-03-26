@@ -1227,6 +1227,376 @@ Student will learn:
 # 🚀 Next Step
 
 
+# ☸️ Kubernetes Deployment — 3 Tier PHP Application
+
+# 🎯 Project Goal
+
+Deploy the same **PHP 3‑Tier Application** on Kubernetes using:
+
+* Kubeadm Cluster
+* Kind Cluster (Local Testing)
+* Deployment
+* Service
+* ConfigMap
+* Secret
+* Ingress
+* Persistent Volume
+* Prometheus Monitoring
+* Grafana Dashboard
+
+This is **Step‑4 of End‑to‑End DevOps Project**
+
+---
+
+# 🏗️ Kubernetes Architecture
+
+```
+Internet
+   |
+Ingress Controller
+   |
+Service (ClusterIP)
+   |
+PHP App Pods
+   |
+Service
+   |
+MySQL Pod
+   |
+Persistent Volume
+```
+
+---
+
+# 🪜 Step 1 — Install Kubernetes (Kubeadm)
+
+## Install Dependencies
+
+```
+sudo apt update
+sudo apt install -y apt-transport-https ca-certificates curl
+```
+
+## Install Docker
+
+```
+sudo apt install docker.io -y
+```
+
+---
+
+# Install Kubernetes Packages
+
+```
+curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+
+sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+
+sudo apt install kubeadm kubelet kubectl -y
+```
+
+---
+
+# Initialize Cluster
+
+```
+sudo kubeadm init
+```
+
+---
+
+# Configure kubectl
+
+```
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+
+---
+
+# Install Network Plugin
+
+```
+kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+```
+
+---
+
+# 🪜 Step 2 — KIND Cluster (Alternative)
+
+Install Kind
+
+```
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/latest/kind-linux-amd64
+chmod +x ./kind
+sudo mv ./kind /usr/local/bin/kind
+```
+
+Create Cluster
+
+```
+kind create cluster --name devops-cluster
+```
+
+Verify
+
+```
+kubectl get nodes
+```
+
+---
+
+# 🪜 Step 3 — Namespace
+
+namespace.yaml
+
+```
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ecommerce
+```
+
+Apply
+
+```
+kubectl apply -f namespace.yaml
+```
+
+---
+
+# 🪜 Step 4 — MySQL Deployment
+
+mysql-deployment.yaml
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  namespace: ecommerce
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:5.7
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: root
+        - name: MYSQL_DATABASE
+          value: ecomdb
+        ports:
+        - containerPort: 3306
+```
+
+---
+
+# MySQL Service
+
+mysql-service.yaml
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: ecommerce
+spec:
+  ports:
+  - port: 3306
+  selector:
+    app: mysql
+  clusterIP: None
+```
+
+---
+
+# 🪜 Step 5 — PHP Application Deployment
+
+php-deployment.yaml
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-app
+  namespace: ecommerce
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: php
+  template:
+    metadata:
+      labels:
+        app: php
+    spec:
+      containers:
+      - name: php
+        image: php-ecommerce:latest
+        ports:
+        - containerPort: 80
+```
+
+---
+
+# PHP Service
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: php-service
+  namespace: ecommerce
+spec:
+  type: NodePort
+  selector:
+    app: php
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30007
+```
+
+---
+
+# Apply Resources
+
+```
+kubectl apply -f .
+```
+
+---
+
+# 🪜 Step 6 — Ingress Controller
+
+Install nginx ingress
+
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+```
+
+---
+
+# 🪜 Step 7 — Prometheus Monitoring
+
+Install Helm
+
+```
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+```
+
+Add Repo
+
+```
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
+helm repo update
+```
+
+Install Prometheus
+
+```
+helm install prometheus prometheus-community/kube-prometheus-stack
+```
+
+---
+
+# 🪜 Step 8 — Access Grafana
+
+Get Password
+
+```
+kubectl get secret prometheus-grafana -o jsonpath="{.data.admin-password}" | base64 --decode
+```
+
+Port Forward
+
+```
+kubectl port-forward svc/prometheus-grafana 3000:80
+```
+
+Access
+
+```
+http://localhost:3000
+```
+
+Login
+
+```
+admin
+password
+```
+
+---
+
+# 🪜 Step 9 — Check Pods
+
+```
+kubectl get pods -n ecommerce
+```
+
+---
+
+# 🪜 Step 10 — Troubleshooting
+
+```
+kubectl describe pod
+
+kubectl logs podname
+
+kubectl get svc
+```
+
+---
+
+# 📚 Kubernetes Commands
+
+```
+kubectl get pods
+
+kubectl get svc
+
+kubectl get deploy
+
+kubectl apply -f
+
+kubectl delete -f
+```
+
+---
+
+# 🎯 Learning Outcome
+
+Student will learn
+
+✅ Kubernetes Cluster
+✅ Deployment
+✅ Service
+✅ Ingress
+✅ Monitoring
+✅ Prometheus
+✅ Grafana
+
+---
+
+# 🚀 Next Step
+
+Helm + Jenkins + ArgoCD
+
+---
+
+
 
 
 
