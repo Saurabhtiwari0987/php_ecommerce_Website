@@ -355,7 +355,7 @@ This project also includes **Shell Scripting** to automate deployment.
 Create file
 
 ```bash
-nano deploy.sh
+nano or vi deploy.sh
 ```
 
 Paste
@@ -418,7 +418,7 @@ Run Script
 # 📜 Script 2 — Database Setup Script
 
 ```bash
-nano db-setup.sh
+nano or Vi db-setup.sh
 ```
 
 ```bash
@@ -439,7 +439,7 @@ echo "Database Created"
 # 📜 Script 3 — Application Deployment Script
 
 ```bash
-nano app-deploy.sh
+nano or Vi app-deploy.sh
 ```
 
 ```bash
@@ -463,7 +463,7 @@ echo "Application Deployed"
 # 📜 Script 4 — Health Check Script
 
 ```bash
-nano health-check.sh
+nano or Vi health-check.sh
 ```
 
 ```bash
@@ -887,6 +887,345 @@ Student will learn:
 ---
 
 # 🚀 Next Step
+
+
+# 🐳 Git + Docker + Docker Compose — 3 Tier PHP Application
+
+# 🎯 Project Goal
+
+Deploy the same **3‑Tier PHP Application** using:
+
+* Git Workflow
+* Docker
+* Docker Network
+* Multi Container Architecture
+* Docker Compose
+* Apache + PHP Container
+* MariaDB Container
+
+This is **Step‑3 of End‑to‑End DevOps Project**
+
+---
+
+# 🏗️ Architecture
+
+```
+Browser
+   |
+Docker Container (Apache + PHP)
+   |
+Docker Network
+   |
+MariaDB Container
+```
+
+---
+
+# 🪜 Step 1 — Install Docker
+
+Ubuntu / WSL
+
+```bash
+sudo apt update
+sudo apt install docker.io -y
+
+sudo systemctl start docker
+sudo systemctl enable docker
+```
+
+Verify
+
+```bash
+docker --version
+```
+
+---
+
+# 🪜 Step 2 — Install Docker Compose
+
+```bash
+sudo apt install docker-compose -y
+```
+
+Verify
+
+```bash
+docker-compose --version
+```
+
+---
+
+# 🪜 Step 3 — Git Project Setup
+
+Clone Project
+
+```bash
+git clone https://github.com/Saurabhtiwari0987/php_ecommerce_Website.git
+
+cd php_ecommerce_Website
+```
+
+---
+
+# 🪜 Step 4 — Git Branch Workflow
+
+Create Dev Branch
+
+```bash
+git checkout -b dev
+```
+
+Create Feature Branch
+
+```bash
+git checkout -b feature-docker
+```
+
+Commit Changes
+
+```bash
+git add .
+
+git commit -m "Added Docker Support"
+```
+
+Merge Branch
+
+```bash
+git checkout dev
+
+git merge feature-docker
+```
+
+Push to GitHub
+
+```bash
+git push origin dev
+```
+
+---
+
+# 🪜 Step 5 — Create Dockerfile
+
+Create file
+
+```bash
+nano Dockerfile
+```
+
+Paste
+
+```dockerfile
+FROM php:8.2-apache
+
+RUN docker-php-ext-install mysqli
+
+COPY . /var/www/html/
+
+EXPOSE 80
+```
+
+---
+
+# 🪜 Step 6 — Build Docker Image
+
+```bash
+docker build -t php-ecommerce .
+```
+
+Verify
+
+```bash
+docker images
+```
+
+---
+
+# 🪜 Step 7 — Create Docker Network
+
+```bash
+docker network create ecommerce-network
+```
+
+Verify
+
+```bash
+docker network ls
+```
+
+---
+
+# 🪜 Step 8 — Run Database Container
+
+```bash
+docker run -d \
+--name mysql-db \
+--network ecommerce-network \
+-e MYSQL_ROOT_PASSWORD=root \
+-e MYSQL_DATABASE=ecomdb \
+-e MYSQL_USER=ecomuser \
+-e MYSQL_PASSWORD=ecompassword \
+mysql:5.7
+```
+
+Verify
+
+```bash
+docker ps
+```
+
+---
+
+# 🪜 Step 9 — Run Application Container
+
+```bash
+docker run -d \
+--name php-app \
+--network ecommerce-network \
+-p 8080:80 \
+php-ecommerce
+```
+
+---
+
+# 🪜 Step 10 — Test Application
+
+Browser
+
+```
+http://localhost:8080
+```
+
+---
+
+# 🪜 Step 11 — Docker Compose Setup
+
+Create file
+
+```bash
+nano docker-compose.yml
+```
+
+---
+
+# 🪜 Step 12 — Docker Compose File
+
+```yaml
+version: '3.8'
+
+services:
+
+  db:
+    image: mysql:5.7
+    container_name: mysql-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ecomdb
+      MYSQL_USER: ecomuser
+      MYSQL_PASSWORD: ecompassword
+    networks:
+      - ecommerce-network
+
+  web:
+    build: .
+    container_name: php-app
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    networks:
+      - ecommerce-network
+
+networks:
+  ecommerce-network:
+```
+
+---
+
+# 🪜 Step 13 — Run Docker Compose
+
+```bash
+docker-compose up -d
+```
+
+Verify
+
+```bash
+docker-compose ps
+```
+
+---
+
+# 🪜 Step 14 — Stop Containers
+
+```bash
+docker-compose down
+```
+
+---
+
+# 🪜 Step 15 — Troubleshooting
+
+Check Logs
+
+```bash
+docker logs php-app
+```
+
+Check Containers
+
+```bash
+docker ps
+```
+
+Check Network
+
+```bash
+docker network inspect ecommerce-network
+```
+
+---
+
+# 📚 Docker Commands Used
+
+```bash
+docker build
+
+docker run
+
+docker ps
+
+docker stop
+
+docker rm
+
+docker images
+
+docker network create
+
+docker-compose up
+
+docker-compose down
+```
+
+---
+
+# 🎯 Learning Outcome
+
+Student will learn:
+
+✅ Git Workflow
+✅ Dockerfile
+✅ Docker Image
+✅ Docker Network
+✅ Multi Container
+✅ Docker Compose
+
+---
+
+# 🚀 Next Step
+
 
 
 
