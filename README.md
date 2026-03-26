@@ -1592,9 +1592,635 @@ Student will learn
 
 # 🚀 Next Step
 
-Helm + Jenkins + ArgoCD
+# 🚀 Jenkins CI/CD Pipeline — Git → Docker → DockerHub → Kubernetes
+
+# 🎯 Project Goal
+
+Create Full Automated CI/CD Pipeline:
+
+```
+Developer Push Code → GitHub
+        ↓
+      Jenkins
+        ↓
+ Build Docker Image
+        ↓
+ Push to DockerHub
+        ↓
+ Deploy to Kubernetes
+```
+
+This is **Step‑5 of End‑to‑End DevOps Project**
 
 ---
+
+# 🏗️ Architecture
+
+```
+GitHub
+   |
+Webhook
+   |
+Jenkins
+   |
+Docker Build
+   |
+DockerHub
+   |
+Kubernetes Deployment
+```
+
+---
+
+# 🪜 Step 1 — Install Jenkins
+
+Ubuntu
+
+```bash
+sudo apt update
+sudo apt install openjdk-17-jdk -y
+
+curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | sudo tee \
+  /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+
+ echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+sudo apt update
+sudo apt install jenkins -y
+```
+
+Start Jenkins
+
+```bash
+sudo systemctl start jenkins
+sudo systemctl enable jenkins
+```
+
+Access Jenkins
+
+```
+http://SERVER-IP:8080
+```
+
+---
+
+# 🪜 Step 2 — Install Required Jenkins Plugins
+
+Go to:
+
+Manage Jenkins → Plugins
+
+Install:
+
+* Git Plugin
+* Docker Plugin
+* Docker Pipeline
+* Kubernetes CLI Plugin
+* Pipeline Plugin
+* GitHub Integration Plugin
+
+---
+
+# 🪜 Step 3 — Install Docker on Jenkins Server
+
+```bash
+sudo apt install docker.io -y
+
+sudo usermod -aG docker jenkins
+
+sudo systemctl restart jenkins
+```
+
+Verify
+
+```bash
+docker ps
+```
+
+---
+
+# 🪜 Step 4 — Add DockerHub Credentials
+
+Manage Jenkins → Credentials
+
+Add:
+
+```
+Username : DockerHub Username
+Password : DockerHub Password
+ID : dockerhub
+```
+
+---
+
+# 🪜 Step 5 — Add Kubernetes Credentials
+
+```bash
+kubectl config view --raw
+```
+
+Add kubeconfig in Jenkins Credentials
+
+ID:
+
+```
+kubeconfig
+```
+
+---
+
+# 🪜 Step 6 — Create Jenkins Pipeline Job
+
+New Item → Pipeline
+
+Name:
+
+```
+php-ecommerce-pipeline
+```
+
+---
+
+# 🪜 Step 7 — Jenkinsfile
+
+Create Jenkinsfile in GitHub Repo
+
+```groovy
+pipeline {
+
+agent any
+
+stages {
+
+stage('Clone Repository') {
+steps {
+ git 'https://github.com/Saurabhtiwari0987/php_ecommerce_Website.git'
+}
+}
+
+stage('Build Docker Image') {
+steps {
+ script {
+ docker.build("saurabhtiwari/php-ecommerce:latest")
+ }
+}
+}
+
+stage('Push Docker Image') {
+steps {
+ script {
+ docker.withRegistry('', 'dockerhub') {
+ docker.image('saurabhtiwari/php-ecommerce:latest').push()
+ }
+ }
+}
+}
+
+stage('Deploy to Kubernetes') {
+steps {
+sh 'kubectl apply -f k8s/'
+}
+}
+
+}
+}
+```
+
+---
+
+# 🪜 Step 8 — Kubernetes Deployment YAML
+
+k8s/deployment.yaml
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: php
+  template:
+    metadata:
+      labels:
+        app: php
+    spec:
+      containers:
+      - name: php
+        image: saurabhtiwari/php-ecommerce:latest
+        ports:
+        - containerPort: 80
+```
+
+---
+
+# Service YAML
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: php-service
+spec:
+  type: NodePort
+  selector:
+    app: php
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30007
+```
+
+---
+
+# 🪜 Step 9 — GitHub Webhook
+
+GitHub Repo → Settings → Webhooks
+
+Add:
+
+```
+http://jenkins-ip:8080/github-webhook/
+```
+
+Now pipeline triggers automatically
+
+---
+
+# 🪜 Step 10 — Test Pipeline
+
+Push Code
+
+```bash
+git add .
+
+git commit -m "updated code"
+
+git push
+```
+
+Pipeline Automatically:
+
+✅ Build Image
+✅ Push DockerHub
+✅ Deploy Kubernetes
+
+---
+
+# 🎯 Pipeline Flow
+
+```
+GitHub Push
+     ↓
+Jenkins Trigger
+     ↓
+Docker Build
+     ↓
+DockerHub Push
+     ↓
+Kubernetes Deploy
+```
+
+---
+
+# 🎯 Learning Outcome
+
+Student will learn:
+
+✅ Jenkins Pipeline
+✅ Docker Automation
+✅ Kubernetes Deploy
+✅ CI/CD Pipeline
+
+---
+
+# 🚀 Next Step
+
+# 🚀 End‑to‑End DevOps Project using Terraform
+
+# 🎯 Project Overview
+
+We will build Full Production DevOps Architecture using Terraform:
+
+```
+Terraform → AWS Infrastructure
+        ↓
+EC2 Instances
+        ↓
+Jenkins Setup
+        ↓
+Docker Build
+        ↓
+Push to DockerHub
+        ↓
+Deploy to Kubernetes
+        ↓
+Monitoring (Prometheus + Grafana)
+```
+
+---
+
+# 🏗️ Final Architecture
+
+```
+AWS Cloud
+ ├── VPC
+ │   ├── Public Subnet
+ │   │    ├── Jenkins Server
+ │   │    ├── Bastion Host
+ │   │
+ │   ├── Private Subnet
+ │        ├── Kubernetes Master
+ │        ├── Kubernetes Worker 1
+ │        ├── Kubernetes Worker 2
+```
+
+---
+
+# 🪜 Step 1 — Install Terraform
+
+Ubuntu
+
+```bash
+sudo apt update
+sudo apt install unzip -y
+
+wget https://releases.hashicorp.com/terraform/1.6.6/terraform_1.6.6_linux_amd64.zip
+
+unzip terraform_1.6.6_linux_amd64.zip
+
+sudo mv terraform /usr/local/bin/
+
+terraform -version
+```
+
+---
+
+# 🪜 Step 2 — Install AWS CLI
+
+```bash
+sudo apt install awscli -y
+
+aws configure
+```
+
+Enter:
+
+```
+Access Key
+Secret Key
+Region
+```
+
+---
+
+# 🪜 Step 3 — Terraform Project Structure
+
+```
+terraform-project
+ ├── provider.tf
+ ├── vpc.tf
+ ├── subnet.tf
+ ├── ec2.tf
+ ├── security.tf
+ ├── variables.tf
+ ├── outputs.tf
+```
+
+---
+
+# 🪜 Step 4 — provider.tf
+
+```hcl
+provider "aws" {
+  region = "ap-south-1"
+}
+```
+
+---
+
+# 🪜 Step 5 — VPC Creation
+
+vpc.tf
+
+```hcl
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+
+  tags = {
+    Name = "DevOps-VPC"
+  }
+}
+```
+
+---
+
+# 🪜 Step 6 — Subnet Creation
+
+subnet.tf
+
+```hcl
+resource "aws_subnet" "public" {
+  vpc_id = aws_vpc.main.id
+  cidr_block = "10.0.1.0/24"
+  availability_zone = "ap-south-1a"
+
+  tags = {
+    Name = "Public Subnet"
+  }
+}
+
+resource "aws_subnet" "private" {
+  vpc_id = aws_vpc.main.id
+  cidr_block = "10.0.2.0/24"
+  availability_zone = "ap-south-1a"
+
+  tags = {
+    Name = "Private Subnet"
+  }
+}
+```
+
+---
+
+# 🪜 Step 7 — Internet Gateway
+
+```hcl
+resource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.main.id
+}
+```
+
+---
+
+# 🪜 Step 8 — Route Table
+
+```hcl
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.gw.id
+  }
+}
+```
+
+---
+
+# 🪜 Step 9 — Security Group
+
+security.tf
+
+```hcl
+resource "aws_security_group" "devops" {
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port = 8080
+    to_port = 8080
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+```
+
+---
+
+# 🪜 Step 10 — EC2 Instance
+
+```hcl
+resource "aws_instance" "jenkins" {
+  ami = "ami-0f5ee92e2d63afc18"
+  instance_type = "t2.medium"
+  subnet_id = aws_subnet.public.id
+
+  vpc_security_group_ids = [aws_security_group.devops.id]
+
+  tags = {
+    Name = "Jenkins Server"
+  }
+}
+```
+
+---
+
+# 🪜 Step 11 — Terraform Commands
+
+```bash
+terraform init
+
+terraform plan
+
+terraform apply
+```
+
+---
+
+# 🪜 Step 12 — Install Jenkins using Terraform UserData
+
+```hcl
+user_data = <<-EOF
+#!/bin/bash
+sudo apt update
+sudo apt install docker.io -y
+sudo apt install openjdk-17-jdk -y
+sudo apt install jenkins -y
+EOF
+```
+
+---
+
+# 🪜 Step 13 — Kubernetes Setup
+
+After EC2 creation:
+
+Install Kubernetes using kubeadm
+
+Master Node
+
+Worker Nodes
+
+---
+
+# 🪜 Step 14 — Jenkins Pipeline Flow
+
+```
+GitHub Push
+      ↓
+Jenkins Build
+      ↓
+Docker Image
+      ↓
+DockerHub
+      ↓
+Kubernetes Deploy
+```
+
+---
+
+# 🪜 Step 15 — Monitoring Setup
+
+Install:
+
+Prometheus
+
+Grafana
+
+---
+
+# 🎯 Final Project Flow
+
+```
+Terraform
+    ↓
+AWS Infrastructure
+    ↓
+Jenkins
+    ↓
+Docker
+    ↓
+DockerHub
+    ↓
+Kubernetes
+    ↓
+Monitoring
+```
+
+---
+
+# 🎯 Resume Project Title
+
+End to End DevOps Automation using:
+
+Terraform
+AWS
+Jenkins
+Docker
+Kubernetes
+Prometheus
+Grafana
+
+---
+
 
 
 
