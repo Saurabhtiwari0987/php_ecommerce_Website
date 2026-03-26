@@ -513,16 +513,382 @@ Student will learn:
 
 # 🚀 Next Step
 
-AWS 3-Tier Deployment
+# ☁️ AWS 3‑Tier Architecture Project — PHP Application Deployment
+
+# 🎯 Project Goal
+
+Deploy the same **3‑Tier PHP Application** on **AWS Cloud** using:
+
+* VPC
+* Public & Private Subnets
+* Internet Gateway
+* NAT Gateway
+* Route Tables
+* EC2 Instances
+* Application Load Balancer
+* Auto Scaling Group
+* RDS Database
+* CloudWatch Monitoring
+
+This is **Step‑2 of End‑to‑End DevOps Project**
 
 ---
 
-# 👨‍💻 Author
+# 🏗️ AWS 3‑Tier Architecture Diagram
 
-Saurabh Tiwari
+```
+                Internet
+                   |
+             Internet Gateway
+                   |
+         -------------------------
+         |                       |
+     Public Subnet 1        Public Subnet 2
+     (Web Tier)             (Web Tier)
+         |                       |
+         -------- ALB -----------
+                   |
+        ---------------------------
+        |                         |
+   Private Subnet 1         Private Subnet 2
+     (App Tier)               (App Tier)
 
-DevOps End-to-End Project
+        ---------------------------
+        |                         |
+   Private Subnet 3         Private Subnet 4
+    (Database Tier)          (Database Tier)
 
-Saurabh Tiwari
+              RDS Database
+```
 
-DevOps End‑to‑End Project
+---
+
+# 📍 Architecture Requirements
+
+| Resource          | Count |
+| ----------------- | ----- |
+| VPC               | 1     |
+| Availability Zone | 2     |
+| Public Subnet     | 2     |
+| Private Subnet    | 4     |
+| NAT Gateway       | 1     |
+| Internet Gateway  | 1     |
+| Route Table       | 3     |
+| EC2 Instance      | 2     |
+| RDS Database      | 1     |
+| Load Balancer     | 1     |
+| Auto Scaling      | 1     |
+
+---
+
+# 🪜 Step 1 — Create VPC
+
+Go to AWS Console → VPC → Create VPC
+
+```
+Name: DevOps-3tier-VPC
+CIDR: 10.0.0.0/16
+```
+
+Click Create
+
+---
+
+# 🪜 Step 2 — Create Subnets
+
+Create 6 Subnets
+
+### Public Subnets
+
+Public Subnet 1
+
+```
+CIDR: 10.0.1.0/24
+AZ: ap-south-1a
+```
+
+Public Subnet 2
+
+```
+CIDR: 10.0.2.0/24
+AZ: ap-south-1b
+```
+
+---
+
+### Private Subnets (App Tier)
+
+Private Subnet 1
+
+```
+10.0.3.0/24
+```
+
+Private Subnet 2
+
+```
+10.0.4.0/24
+```
+
+---
+
+### Private Subnets (Database Tier)
+
+Private Subnet 3
+
+```
+10.0.5.0/24
+```
+
+Private Subnet 4
+
+```
+10.0.6.0/24
+```
+
+---
+
+# 🪜 Step 3 — Create Internet Gateway
+
+Create Internet Gateway
+
+Attach to VPC
+
+```
+DevOps-IGW
+```
+
+---
+
+# 🪜 Step 4 — Create NAT Gateway
+
+Create NAT Gateway in
+
+```
+Public Subnet 1
+```
+
+Allocate Elastic IP
+
+Create NAT Gateway
+
+---
+
+# 🪜 Step 5 — Create Route Tables
+
+## Public Route Table
+
+Add Route
+
+```
+0.0.0.0/0 → Internet Gateway
+```
+
+Attach to:
+
+* Public Subnet 1
+* Public Subnet 2
+
+---
+
+## Private Route Table
+
+Add Route
+
+```
+0.0.0.0/0 → NAT Gateway
+```
+
+Attach to:
+
+* Private Subnet 1
+* Private Subnet 2
+* Private Subnet 3
+* Private Subnet 4
+
+---
+
+# 🪜 Step 6 — Create Security Groups
+
+## Web Tier SG
+
+Allow
+
+```
+HTTP 80
+SSH 22
+```
+
+---
+
+## App Tier SG
+
+Allow
+
+```
+SSH
+HTTP
+```
+
+---
+
+## Database SG
+
+Allow
+
+```
+MYSQL 3306
+```
+
+---
+
+# 🪜 Step 7 — Launch EC2 Instances
+
+Launch 2 Instances
+
+Web Tier Instance
+
+```
+Public Subnet 1
+```
+
+App Tier Instance
+
+```
+Private Subnet 1
+```
+
+---
+
+# 🪜 Step 8 — Install Application
+
+SSH into Web Server
+
+Install Packages
+
+```bash
+sudo apt update
+sudo apt install apache2 php php-mysql git -y
+```
+
+Clone Application
+
+```bash
+cd /var/www/html
+sudo rm -rf *
+
+sudo git clone https://github.com/Saurabhtiwari0987/php_ecommerce_Website.git .
+```
+
+---
+
+# 🪜 Step 9 — Create RDS Database
+
+Create Database
+
+```
+Engine: MySQL
+```
+
+Choose
+
+```
+Private Subnet
+```
+
+Security Group
+
+```
+Database SG
+```
+
+---
+
+# 🪜 Step 10 — Connect Application to RDS
+
+Update .env
+
+```
+DB_HOST=RDS-ENDPOINT
+DB_USER=admin
+DB_PASSWORD=password
+DB_NAME=ecomdb
+```
+
+---
+
+# 🪜 Step 11 — Create Load Balancer
+
+Create Application Load Balancer
+
+Attach
+
+* Public Subnet 1
+* Public Subnet 2
+
+Add Target Group
+
+Attach EC2 Instances
+
+---
+
+# 🪜 Step 12 — Create Auto Scaling Group
+
+Create Launch Template
+
+Create Auto Scaling
+
+Attach Load Balancer
+
+Select Private Subnets
+
+---
+
+# 🪜 Step 13 — Enable CloudWatch
+
+Enable Monitoring
+
+Create Alarm
+
+CPU Utilization
+
+---
+
+# 🎯 Final Architecture
+
+```
+Internet
+   |
+Load Balancer
+   |
+Web Tier EC2
+   |
+App Tier EC2
+   |
+RDS Database
+```
+
+---
+
+# 🎯 Learning Outcome
+
+Student will learn:
+
+✅ AWS VPC
+✅ Subnets
+✅ NAT Gateway
+✅ Route Tables
+✅ EC2
+✅ RDS
+✅ Load Balancer
+✅ Auto Scaling
+✅ CloudWatch
+
+---
+
+# 🚀 Next Step
+
+
+
+
+
